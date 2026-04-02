@@ -60,6 +60,7 @@ const TAB_TITLES: [&str; 2] = ["Search", "Inspect"];
 pub enum InputAction {
     Accept(usize),
     AcceptInspecting,
+    AcceptQuery,
     Copy(usize),
     Delete(usize),
     ReturnOriginal,
@@ -643,6 +644,7 @@ impl State {
             Action::Delete => InputAction::Delete(self.results_state.selected()),
             Action::ReturnOriginal => InputAction::ReturnOriginal,
             Action::ReturnQuery => InputAction::ReturnQuery,
+            Action::AcceptQuery => InputAction::AcceptQuery,
             Action::Exit => Self::handle_key_exit(settings),
             Action::Redraw => InputAction::Redraw,
             Action::CycleFilterMode => {
@@ -1994,6 +1996,14 @@ pub async fn history(
             let cmd = results.swap_remove(index).command;
             set_clipboard(cmd);
             Ok(String::new())
+        }
+        InputAction::AcceptQuery => {
+            let query = app.search.input.into_inner();
+            if accept {
+                Ok(String::from(accept_prefix) + &query)
+            } else {
+                Ok(query)
+            }
         }
         InputAction::ReturnQuery | InputAction::Accept(_) => {
             // Either:
