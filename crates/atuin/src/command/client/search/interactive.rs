@@ -644,7 +644,10 @@ impl State {
             Action::Delete => InputAction::Delete(self.results_state.selected()),
             Action::ReturnOriginal => InputAction::ReturnOriginal,
             Action::ReturnQuery => InputAction::ReturnQuery,
-            Action::AcceptQuery => InputAction::AcceptQuery,
+            Action::AcceptQuery => {
+                self.accept = true;
+                InputAction::AcceptQuery
+            }
             Action::Exit => Self::handle_key_exit(settings),
             Action::Redraw => InputAction::Redraw,
             Action::CycleFilterMode => {
